@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Nogor Pay</string>
+    <string name="login_title">Login to Nogor Pay</string>
+    <string name="email_hint">Email</string>
+    <string name="device_key_hint">Device Key</string>
+    <string name="login_button">Login</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="refresh">Refresh</string>
+    <string name="contact_settings">Contact Settings</string>
+    <string name="monitoring_active">SMS Monitoring Active</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="permission_required">Permissions Required</string>
+    <string name="permission_message">This app needs SMS and Contact permissions to monitor messages from allowed contacts.</string>
+</resources>
