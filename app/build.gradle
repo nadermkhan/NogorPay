@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'nogor.pay'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "nogor.pay"
         minSdk 28
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
