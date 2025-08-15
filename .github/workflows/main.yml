@@ -45,7 +45,7 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: sms-monitor-debug-${{ steps.commit.outputs.SHORT_SHA }}
+        name: nogor-pay-debug-${{ steps.commit.outputs.SHORT_SHA }}
         path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 30
         
@@ -57,7 +57,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: dev-${{ steps.commit.outputs.SHORT_SHA }}
-        release_name: SMS Monitor Dev Build ${{ steps.commit.outputs.SHORT_SHA }}
+        release_name: NogorPay Dev Build ${{ steps.commit.outputs.SHORT_SHA }}
         body: |
           ## Development Build
           
@@ -67,7 +67,7 @@ jobs:
           **Build Time**: ${{ github.event.head_commit.timestamp }}
           
           ### Download
-          - [Debug APK](https://github.com/${{ github.repository }}/releases/download/dev-${{ steps.commit.outputs.SHORT_SHA }}/sms-monitor-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk)
+          - [Debug APK](https://github.com/${{ github.repository }}/releases/download/dev-${{ steps.commit.outputs.SHORT_SHA }}/nogor-pay-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk)
           
           ### Installation
           1. Download the APK
@@ -87,5 +87,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: app/build/outputs/apk/debug/app-debug.apk
-        asset_name: sms-monitor-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk
+        asset_name: nogor-pay-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk
         asset_content_type: application/vnd.android.package-archive
