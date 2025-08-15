@@ -29,10 +29,10 @@ public class MyBackgroundService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (isNetworkConnected()) {
-                updateNotification("Online - Monitoring SMS", "SMS Monitor Active");
+                updateNotification("Online - Monitoring SMS", "Nogor Pay Active");
                 syncPendingData();
             } else {
-                updateNotification("Offline - No Internet", "SMS Monitor Active");
+                updateNotification("Offline - No Internet", "Nogor Pay Active");
             }
         }
     };
@@ -73,7 +73,7 @@ public class MyBackgroundService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "SMS Monitor Service",
+                    "NogorPay Service",
                     NotificationManager.IMPORTANCE_LOW
             );
             channel.setDescription("Monitors SMS from allowed contacts");
@@ -93,7 +93,7 @@ public class MyBackgroundService extends Service {
         String status = isNetworkConnected() ? "Online - Monitoring SMS" : "Offline - No Internet";
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("SMS Monitor Active")
+                .setContentTitle("Nogor Pay Active")
                 .setContentText(status)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(pendingIntent)
