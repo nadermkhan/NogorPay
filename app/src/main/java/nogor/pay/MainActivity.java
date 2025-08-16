@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, "PreRelease by Nader", Toast.LENGTH_LONG).show();
         initViews();
         setupDatabase();
-        checkPermissions();
+        checkSmsAndContactsPermissions(); // Updated method name
         startBackgroundService();
         loadSmsData();
         updateNetworkStatus();
@@ -56,13 +55,12 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
     }
 
-    private void checkPermissions() {
+    // Updated method to focus only on SMS and Contacts permissions
+    private void checkSmsAndContactsPermissions() {
         String[] permissions = {
                 Manifest.permission.RECEIVE_SMS,
                 Manifest.permission.READ_SMS,
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.READ_CONTACTS
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -70,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.RECEIVE_SMS,
                     Manifest.permission.READ_SMS,
                     Manifest.permission.READ_CONTACTS,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.POST_NOTIFICATIONS
             };
         }
@@ -132,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -172,16 +169,35 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
+            boolean smsPermissionGranted = false;
+            boolean contactsPermissionGranted = false;
+            
+            // Check which permissions were granted
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    if (permissions[i].equals(Manifest.permission.RECEIVE_SMS) || 
+                        permissions[i].equals(Manifest.permission.READ_SMS)) {
+                        smsPermissionGranted = true;
+                    } else if (permissions[i].equals(Manifest.permission.READ_CONTACTS)) {
+                        contactsPermissionGranted = true;
+                    }
                 }
             }
 
-            if (!allGranted) {
-                Toast.makeText(this, "Permissions are required for the app to work properly",
+            // Show specific messages based on permissions
+            if (!smsPermissionGranted) {
+                Toast.makeText(this, "SMS permissions are required for the app to monitor transactions",
+                        Toast.LENGTH_LONG).show();
+            }
+            
+            if (!contactsPermissionGranted) {
+                Toast.makeText(this, "Contacts permission is required to identify transaction senders",
+                        Toast.LENGTH_LONG).show();
+            }
+            
+            // If critical permissions are missing, show general message
+            if (!smsPermissionGranted || !contactsPermissionGranted) {
+                Toast.makeText(this, "Please grant all requested permissions in Settings for full functionality",
                         Toast.LENGTH_LONG).show();
             }
         }
