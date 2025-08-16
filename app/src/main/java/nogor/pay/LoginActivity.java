@@ -76,27 +76,37 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void handleLoginResponse(String response, String email, String deviceKey, String androidId) {
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
-            int status = jsonResponse.getInt("status");
+private void handleLoginResponse(String response, String email, String deviceKey, String androidId) {
+    try {
+        Log.d("LoginActivity", "Raw response: " + response);
+        JSONObject jsonResponse = new JSONObject(response);
+        int status = jsonResponse.getInt("status");
+        String message = jsonResponse.optString("message", "Login response");
 
-            if (status == 1) {
+        if (status == 1) {
+            saveLoginInfo(email, deviceKey, androidId);
+            Toast.makeText(this, "Login successful: " + message, Toast.LENGTH_SHORT).show();
 
-                saveLoginInfo(email, deviceKey, androidId);
-                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
-            }
-        } catch (JSONException e) {
-            Toast.makeText(this, "Error parsing response", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (status == 3) {
+            // Already logged in case
+            saveLoginInfo(email, deviceKey, androidId);
+            Toast.makeText(this, "Already logged in", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            String errorMsg = jsonResponse.optString("message", "Login failed. Please check your credentials.");
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
         }
+    } catch (JSONException e) {
+        Log.e("LoginActivity", "JSON Parse Error: " + e.getMessage());
+        Log.e("LoginActivity", "Response was: " + response);
+        Toast.makeText(this, "Error parsing server response: " + response, Toast.LENGTH_LONG).show();
     }
-
+}
     private void saveLoginInfo(String email, String deviceKey, String androidId) {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
