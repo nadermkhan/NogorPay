@@ -19,41 +19,59 @@ public class ApiRequest {
     private static final String BASE_URL = "https://pay.itnogor.com/api/";
     private static final String LOGIN_ENDPOINT = "device-connect";
     private static final String SMS_ENDPOINT = "add-data";
+    private static RequestQueue requestQueue;
 
     public interface ApiCallback {
         void onSuccess(String response);
         void onError(String error);
     }
 
+    private static RequestQueue getRequestQueue(Context context) {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        }
+        return requestQueue;
+    }
+
     public static void loginDevice(Context context, String email, String deviceKey,
                                    String androidId, ApiCallback callback) {
-        RequestQueue queue = Volley.newRequestQueue(context);
         String url = BASE_URL + LOGIN_ENDPOINT;
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.d(TAG, "Login Response: " + response);
                         callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onError(error.getMessage());
+                        String errorMessage = error.getMessage() != null ? error.getMessage() : "Unknown error";
+                        Log.e(TAG, "Login Error: " + errorMessage);
+                        callback.onError(errorMessage);
                     }
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("email", email);
-                params.put("device_key", deviceKey);
-                params.put("device_ip", androidId);
+                params.put("user_email", email);      // Fixed: was "email"
+                params.put("device_key", deviceKey); 
+                params.put("device_ip", androidId);   
+                Log.d(TAG, "Sending login params: " + params.toString());
                 return params;
+            }
+            
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                return headers;
             }
         };
 
-        queue.add(request);
+        getRequestQueue(context).add(request);
     }
 
     public static void sendSmsData(Context context, String message, String sender, ApiCallback callback) {
@@ -67,7 +85,6 @@ public class ApiRequest {
             return;
         }
 
-        RequestQueue queue = Volley.newRequestQueue(context);
         String url = BASE_URL + SMS_ENDPOINT;
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
@@ -81,22 +98,31 @@ public class ApiRequest {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "SMS API Error: " + error.getMessage());
-                        callback.onError(error.getMessage());
+                        String errorMessage = error.getMessage() != null ? error.getMessage() : "Network error";
+                        Log.e(TAG, "SMS API Error: " + errorMessage);
+                        callback.onError(errorMessage);
                     }
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("email", email);
-                params.put("device_key", deviceKey);
-                params.put("device_ip", deviceIp);
-                params.put("title", sender);
-                params.put("body", message);
+                params.put("user_email", email);      // Fixed: was "email"
+                params.put("device_key", deviceKey);  // Correct
+                params.put("device_ip", deviceIp);    // Correct
+                params.put("address", sender);        // This should be sender/title
+                params.put("message", message);       // This should be body/message
+                Log.d(TAG, "Sending SMS params: " + params.toString());
                 return params;
+            }
+            
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                return headers;
             }
         };
 
-        queue.add(request);
+        getRequestQueue(context).add(request);
     }
 }
