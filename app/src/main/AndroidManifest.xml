@@ -10,11 +10,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
+    <!-- Optional permissions for newer Android versions -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:node="remove" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" tools:node="remove" />
+
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="34" />
 
     <application
             android:allowBackup="true"
@@ -30,7 +33,7 @@
         <activity
                 android:name=".SplashActivity"
                 android:exported="true"
-                android:theme="@style/Theme.NogorPay.NoActionBar">
+                android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,17 +43,20 @@
         <activity
                 android:name=".LoginActivity"
                 android:exported="false"
-                android:screenOrientation="portrait" />
+                android:screenOrientation="portrait"
+                tools:ignore="LockedOrientationActivity" />
 
         <activity
                 android:name=".MainActivity"
                 android:exported="false"
-                android:screenOrientation="portrait" />
+                android:screenOrientation="portrait"
+                tools:ignore="LockedOrientationActivity" />
 
         <activity
                 android:name=".ContactSettingsActivity"
                 android:exported="false"
-                android:screenOrientation="portrait" />
+                android:screenOrientation="portrait"
+                tools:ignore="LockedOrientationActivity" />
 
         <receiver
                 android:name=".SmsReceiver"
@@ -71,8 +77,7 @@
 
         <service
                 android:name=".MyBackgroundService"
-                android:exported="false"
-                android:foregroundServiceType="location" />
+                android:exported="false" />
 
     </application>
 </manifest>
