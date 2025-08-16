@@ -36,10 +36,12 @@ jobs:
       
     - name: Create signing keystore
       run: |
-        keytool -genkeypair -v -storetype PKCS12 -keystore keystore/itnogor-build-key.jks -alias "ItNogor Build" -keyalg RSA -keysize 2048 -validity 10000 -storepass itnogor -keypass itnogor -dname "CN=ItNogor Build, OU=Development, O=ItNogor, L=Dhaka, ST=Dhaka, C=BD"
+        keytool -genkeypair -v -storetype PKCS12 -keystore keystore/itnogor-build-key.jks -alias "ItNogor Build" -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=ItNogor Build, OU=Development, O=ItNogor, L=Dhaka, ST=Dhaka, C=BD"
       
     - name: Setup signing config
       run: |
+        echo "" >> gradle.properties
+        echo "# ItNogor Build Signing Config" >> gradle.properties
         echo "storeFile=../keystore/itnogor-build-key.jks" >> gradle.properties
         echo "storePassword=android" >> gradle.properties
         echo "keyAlias=ItNogor Build" >> gradle.properties

@@ -16,18 +16,19 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
- signingConfigs {
+   signingConfigs {
         release {
-            storeFile file(System.getProperty("user.home") + "/../keystore/itnogor-build-key.jks")
-            storePassword "itnogor"
+            storeFile file("../keystore/itnogor-build-key.jks")
+            storePassword "android"
             keyAlias "ItNogor Build"
-            keyPassword "itnogor"
+            keyPassword "android"
         }
     }
+    
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
