@@ -1,6 +1,5 @@
 package nogor.pay;
 
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +13,17 @@ public class ContactListAdapter extends BaseAdapter {
     private Context context;
     private List<String> items;
     private LayoutInflater inflater;
-    private OnDeleteClickListener deleteListener;
+    private OnItemClickListener clickListener;
 
-    public interface OnDeleteClickListener {
+    public interface OnItemClickListener {
+        void onEditClick(int position);
         void onDeleteClick(int position);
     }
 
-    public ContactListAdapter(Context context, List<String> items, OnDeleteClickListener deleteListener) {
+    public ContactListAdapter(Context context, List<String> items, OnItemClickListener clickListener) {
         this.context = context;
         this.items = items;
-        this.deleteListener = deleteListener;
+        this.clickListener = clickListener;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -50,6 +50,7 @@ public class ContactListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.contact_list_item, parent, false);
             holder = new ViewHolder();
             holder.itemTextView = convertView.findViewById(R.id.itemTextView);
+            holder.editButton = convertView.findViewById(R.id.editButton);
             holder.deleteButton = convertView.findViewById(R.id.deleteButton);
             convertView.setTag(holder);
         } else {
@@ -59,11 +60,21 @@ public class ContactListAdapter extends BaseAdapter {
         String item = items.get(position);
         holder.itemTextView.setText(item);
 
+        // Set click listeners
+        holder.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickListener != null) {
+                    clickListener.onEditClick(position);
+                }
+            }
+        });
+
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deleteListener != null) {
-                    deleteListener.onDeleteClick(position);
+                if (clickListener != null) {
+                    clickListener.onDeleteClick(position);
                 }
             }
         });
@@ -73,6 +84,7 @@ public class ContactListAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         TextView itemTextView;
+        Button editButton;
         Button deleteButton;
     }
 }
