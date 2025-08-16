@@ -14,16 +14,12 @@ public class ContactFilter {
 
 
     private static final Set<String> DEFAULT_CONTACTS = new HashSet<String>() {{
-        add("mom");
-        add("dad");
-        add("john");
+        add("BKash");
     }};
 
 
     private static final Set<String> DEFAULT_NUMBERS = new HashSet<String>() {{
-        add("+1234567890"); // Mom's number
-        add("+0987654321"); // Dad's number
-        add("+1122334455"); // John's number
+        add("247"); 
     }};
 
     public static boolean isAllowedContact(Context context, String phoneNumber) {
