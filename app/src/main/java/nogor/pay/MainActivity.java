@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
-    // Add this method to MainActivity.java class
+
     public void updateNetworkStatusb(boolean isConnected) {
         runOnUiThread(new Runnable() {
             @Override

@@ -1,5 +1,3 @@
-name: Dev Build
-
 on:
   push:
     branches: [ main, develop ]
@@ -33,8 +31,22 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
       
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
+    - name: Create keystore directory
+      run: mkdir -p keystore
+      
+    - name: Create signing keystore
+      run: |
+        keytool -genkeypair -v -storetype PKCS12 -keystore keystore/itnogor-build-key.jks -alias "ItNogor Build" -keyalg RSA -keysize 2048 -validity 10000 -storepass itnogor -keypass itnogor -dname "CN=ItNogor Build, OU=Development, O=ItNogor, L=Dhaka, ST=Dhaka, C=BD"
+      
+    - name: Setup signing config
+      run: |
+        echo "storeFile=../keystore/itnogor-build-key.jks" >> gradle.properties
+        echo "storePassword=android" >> gradle.properties
+        echo "keyAlias=ItNogor Build" >> gradle.properties
+        echo "keyPassword=android" >> gradle.properties
+      
+    - name: Build Signed APK
+      run: ./gradlew assembleRelease
       
     - name: Get commit info
       id: commit
@@ -45,8 +57,8 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: nogor-pay-debug-${{ steps.commit.outputs.SHORT_SHA }}
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: nogor-pay-release-${{ steps.commit.outputs.SHORT_SHA }}
+        path: app/build/outputs/apk/release/app-release.apk
         retention-days: 30
         
     - name: Create Release (only on main branch)
@@ -56,10 +68,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: dev-${{ steps.commit.outputs.SHORT_SHA }}
-        release_name: NogorPay Dev Build ${{ steps.commit.outputs.SHORT_SHA }}
+        tag_name: itnogor-${{ steps.commit.outputs.SHORT_SHA }}
+        release_name: NogorPay ItNogor Build ${{ steps.commit.outputs.SHORT_SHA }}
         body: |
-          ## Development Build
+          ## ItNogor Build
           
           **Commit**: ${{ github.sha }}
           **Message**: ${{ steps.commit.outputs.COMMIT_MSG }}
@@ -67,7 +79,7 @@ jobs:
           **Build Time**: ${{ github.event.head_commit.timestamp }}
           
           ### Download
-          - [Debug APK](https://github.com/${{ github.repository }}/releases/download/dev-${{ steps.commit.outputs.SHORT_SHA }}/nogor-pay-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk)
+          - [Release APK](https://github.com/${{ github.repository }}/releases/download/itnogor-${{ steps.commit.outputs.SHORT_SHA }}/nogor-pay-itnogor-${{ steps.commit.outputs.SHORT_SHA }}.apk)
           
           ### Installation
           1. Download the APK
@@ -75,7 +87,7 @@ jobs:
           3. Install the APK
           4. Grant required permissions
           
-          ⚠️ **Note**: This is a development build for testing purposes.
+          ⚠️ **Note**: This is an ItNogor development build for testing purposes.
         draft: false
         prerelease: true
         
@@ -86,6 +98,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: app/build/outputs/apk/debug/app-debug.apk
-        asset_name: nogor-pay-dev-${{ steps.commit.outputs.SHORT_SHA }}.apk
+        asset_path: app/build/outputs/apk/release/app-release.apk
+        asset_name: nogor-pay-itnogor-${{ steps.commit.outputs.SHORT_SHA }}.apk
         asset_content_type: application/vnd.android.package-archive

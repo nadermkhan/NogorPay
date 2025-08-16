@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             int status = jsonResponse.getInt("status");
 
             if (status == 1) {
-                // Login successful
+
                 saveLoginInfo(email, deviceKey, androidId);
                 Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
 

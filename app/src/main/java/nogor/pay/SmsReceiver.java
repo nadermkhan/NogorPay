@@ -1,6 +1,5 @@
 package nogor.pay;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,9 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SmsReceiver extends BroadcastReceiver {
     private static final String TAG = "SmsReceiver";
@@ -34,20 +36,30 @@ public class SmsReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "SMS received from: " + senderNumber + " Message: " + messageText);
 
-            // Filter: Only process SMS from allowed contacts
-            if (ContactFilter.isAllowedContact(context, senderNumber)) {
-                String contactName = getContactDisplayName(context, senderNumber);
-                String displayName = contactName != null ? contactName : senderNumber;
 
-                Log.d(TAG, "SMS from allowed contact: " + displayName);
+            String contactName = getContactDisplayName(context, senderNumber);
+            String displayName = contactName != null ? contactName : senderNumber;
 
-                // Save to database
+
+            displayName = displayName.toLowerCase().trim();
+            senderNumber = senderNumber.toLowerCase().trim();
+
+
+            Set<String> allowedSenders = new HashSet<>(Arrays.asList(
+                "BKash", "Nagad", "NAGAD","IslamiBank", "IBBL", "Celefin"
+            ));
+
+
+            if (allowedSenders.contains(displayName) || allowedSenders.contains(senderNumber)) {
+                Log.d(TAG, "SMS from allowed sender: " + displayName);
+
+
                 databaseHelper.saveSms(displayName, messageText);
 
-                // Send to server
+
                 sendSmsToServer(context, messageText, displayName);
             } else {
-                Log.d(TAG, "SMS from non-allowed contact, ignoring: " + senderNumber);
+                Log.d(TAG, "SMS from non-allowed sender, ignoring: " + senderNumber);
             }
         }
     }

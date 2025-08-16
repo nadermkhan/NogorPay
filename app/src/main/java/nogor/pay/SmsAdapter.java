@@ -58,7 +58,7 @@ public class SmsAdapter extends BaseAdapter {
         holder.senderTextView.setText(sms.get("sender"));
         holder.messageTextView.setText(sms.get("message"));
 
-        // Format timestamp
+
         String timestamp = sms.get("timestamp");
         if (timestamp != null) {
             try {

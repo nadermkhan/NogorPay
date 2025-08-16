@@ -116,7 +116,7 @@ public class ContactSettingsActivity extends AppCompatActivity {
             return;
         }
 
-        // Clean the phone number
+
         String cleanNumber = phoneNumber.replaceAll("[^+\\d]", "");
 
         if (numbersList.contains(cleanNumber)) {
