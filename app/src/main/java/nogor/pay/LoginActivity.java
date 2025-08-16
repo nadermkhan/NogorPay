@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.util.Log;
 public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText, deviceKeyEditText;
     private Button loginButton;
